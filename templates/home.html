@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('new_recipe') }}"><strong>Add New</strong></a>
+    <ul>
+        <li v-for='recipe in recipes' :key='recipe.id'>
+            <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block app_data %}
+    recipes: [
+        {% for recipe in recipes %}
+        {
+            id: {{ recipe.id }},
+            name: "{{ recipe.name }}",
+            view_link: "{{ url_for('show_recipe', recipe_id=recipe.id) }}"
+        },
+        {% endfor %}
+    ]
+{% endblock %}

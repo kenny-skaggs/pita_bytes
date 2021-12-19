@@ -1,0 +1,26 @@
+<!doctype html>
+<title>PitaBytes - {% block title %}{% endblock %}</title>
+
+
+<div id="app">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    {% block pre_app_script %}{% endblock %}
+    {% block app_script %}
+        Vue.options.delimiters = ["{[", "]}"]
+        var app = new Vue({
+            el: '#app',
+            data: {
+                {% block app_data %}{% endblock %}
+            },
+            methods: {
+                {% block app_methods %}{% endblock %}
+            }
+        })
+    {% endblock %}
+</script>

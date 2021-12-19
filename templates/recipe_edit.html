@@ -1,0 +1,69 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('home') }}"><strong>Back</strong></a>
+
+<p>Name <input v-model='name' /></p>
+<hr>
+<p><strong>Ingredients</strong></p>
+<ul>
+    <li v-for='ingredient in ingredients'>
+        <input v-model='ingredient.measure' />
+        <input v-model='ingredient.unit' />
+        <input v-model='ingredient.name' />
+    </li>
+</ul>
+<button @click='addIngredient'>Add Ingredient</button>
+<hr>
+<p><strong>Steps</strong></p>
+<ul>
+    <li v-for='step in steps'>
+        <textarea v-model='step.description'></textarea>
+    </li>
+</ul>
+<button @click='addStep'>Add Step</button>
+<hr>
+<p><button @click='saveRecipe'>Save Recipe</button></p>
+{% endblock %}
+
+{% block pre_app_script %}
+    var ingredient_template = {
+        measure: null,
+        unit: '',
+        name: ''
+    }
+    var step_template = {
+        description: ''
+    }
+{% endblock %}
+
+{% block app_data %}
+    name: '',
+    ingredients: [
+        Object.assign({}, ingredient_template)
+    ],
+    steps: [
+        Object.assign({}, step_template)
+    ]
+{% endblock %}
+
+{% block app_methods %}
+    addIngredient: function() {
+        this.ingredients.push(Object.assign({}, ingredient_template))
+    },
+    addStep: function() {
+        this.steps.push(Object.assign({}, step_template))
+    },
+    saveRecipe: function() {
+        axios.post(
+            "{{ url_for("save_recipe") }}",
+            {
+                name: this.name,
+                ingredients: this.ingredients,
+                steps: this.steps.map(step => step.description)
+            }
+        )
+    }
+{% endblock %}
