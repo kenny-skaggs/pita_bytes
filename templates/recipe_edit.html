@@ -22,6 +22,9 @@
             <div class="col s3 input-field">
                 <input v-model='ingredient.name' placeholder="flour" />
             </div>
+            <div class="col s3 input-field">
+                <input v-model='ingredient.preparation' placeholder="chopped" />
+            </div>
         </div>
     </li>
 </ul>
@@ -42,9 +45,10 @@
 
 {% block pre_app_script %}
     var ingredient_template = {
-        measure: null,
+        amount: null,
         unit: '',
-        name: ''
+        name: '',
+        preparation: ''
     }
     var step_template = {
         description: ''
@@ -52,12 +56,32 @@
 {% endblock %}
 
 {% block app_data %}
-    name: '',
+    recipe_id: {{ recipe.id if recipe else 0 }},
+    name: '{{ recipe.name if recipe else '' }}',
     ingredients: [
-        Object.assign({}, ingredient_template)
+        {% if recipe %}
+            {% for measure in recipe.ingredients %}
+                {
+                    amount: {{ measure.amount }},
+                    unit: "{{ measure.unit or 'null' }}",
+                    name: "{{ measure.ingredient.name }}",
+                    preparation: "{{ measure.preparation or '' }}"
+                },
+            {% endfor %}
+        {% else %}
+            Object.assign({}, ingredient_template)
+        {% endif %}
     ],
     steps: [
-        Object.assign({}, step_template)
+        {% if recipe %}
+            {% for step in recipe.steps %}
+                {
+                    description: "{{ step.description }}"
+                },
+            {% endfor %}
+        {% else %}
+            Object.assign({}, step_template)
+        {% endif %}
     ]
 {% endblock %}
 
@@ -72,6 +96,7 @@
         axios.post(
             "{{ url_for("save_recipe") }}",
             {
+                recipe_id: this.recipe_id,
                 name: this.name,
                 ingredients: this.ingredients,
                 steps: this.steps.map(step => step.description)

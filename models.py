@@ -15,8 +15,8 @@ class Recipe(BaseModel):
     __tablename__ = 'recipes'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(200))
-    ingredients = relationship('Measurement', backref='recipe')
-    steps = relationship('Step', backref='recipe')
+    ingredients = relationship('Measurement', backref='recipe', cascade="all, delete-orphan")
+    steps = relationship('Step', backref='recipe', cascade="all, delete-orphan")
 
 
 class Measurement(BaseModel):

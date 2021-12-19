@@ -7,20 +7,28 @@ import models
 
 class Storage:
     @classmethod
-    def create_recipe(cls, name: str, ingredients, steps):
-        recipe = models.Recipe(
-            name=name,
-            ingredients=[
-                models.Measurement(
-                    amount=measure['measure'],
-                    ingredient=models.Ingredient(name=measure['name'])
-                )
-                for measure in ingredients
-            ],
-            steps=[models.Step(description=step, number=number) for number, step in enumerate(steps)]
-        )
+    def upsert_recipe(cls, recipe_id: int, name: str, ingredients, steps):
+        ingredients = [
+            models.Measurement(
+                amount=measure['amount'],
+                unit=measure['unit'],
+                ingredient=models.Ingredient(name=measure['name']),
+                preparation=measure['preparation']
+            )
+            for measure in ingredients
+        ]
+        steps = [models.Step(description=step, number=number) for number, step in enumerate(steps)]
+
+        if recipe_id:
+            recipe = cls.load_recipe(recipe_id)
+        else:
+            recipe = models.Recipe()
+
+        recipe.name = name
+        recipe.ingredients = ingredients
+        recipe.steps = steps
         with Database().get_new_session() as session:
-            session.add(recipe)
+            session.merge(recipe)
 
     @classmethod
     def load_recipes(cls):
