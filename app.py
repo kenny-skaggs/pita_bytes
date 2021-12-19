@@ -1,8 +1,6 @@
-import logging
 
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, request
 
-import models
 from service import Storage
 
 app = Flask(__name__)

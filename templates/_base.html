@@ -1,26 +1,31 @@
 <!doctype html>
-<title>PitaBytes - {% block title %}{% endblock %}</title>
+<head>
+    <title>PitaBytes - {% block title %}{% endblock %}</title>    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<html>
+    <div id="app" class="container">
+        {% block content %}{% endblock %}
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div id="app">
-    {% block content %}{% endblock %}
-</div>
+    <script>
+        {% block pre_app_script %}{% endblock %}
+        {% block app_script %}
+            Vue.options.delimiters = ["{[", "]}"]
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    {% block app_data %}{% endblock %}
+                },
+                methods: {
+                    {% block app_methods %}{% endblock %}
+                }
+            })
+        {% endblock %}
+    </script>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-<script>
-    {% block pre_app_script %}{% endblock %}
-    {% block app_script %}
-        Vue.options.delimiters = ["{[", "]}"]
-        var app = new Vue({
-            el: '#app',
-            data: {
-                {% block app_data %}{% endblock %}
-            },
-            methods: {
-                {% block app_methods %}{% endblock %}
-            }
-        })
-    {% endblock %}
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</html>

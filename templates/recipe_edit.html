@@ -5,27 +5,39 @@
 {% block content %}
 <a href="{{ url_for('home') }}"><strong>Back</strong></a>
 
-<p>Name <input v-model='name' /></p>
-<hr>
+<div class="row">
+    <input class="col s6" v-model='name' placeholder="Recipe name"/>
+</div>
+
 <p><strong>Ingredients</strong></p>
-<ul>
-    <li v-for='ingredient in ingredients'>
-        <input v-model='ingredient.measure' />
-        <input v-model='ingredient.unit' />
-        <input v-model='ingredient.name' />
+<ul class="collection">
+    <li class="collection-item" v-for='ingredient in ingredients'>
+        <div class="row">
+            <div class="col s1 input-field">
+                <input v-model='ingredient.amount' placeholder="1" />
+            </div>
+            <div class="col s3 input-field">
+                <input v-model='ingredient.unit' placeholder="cup" />
+            </div>
+            <div class="col s3 input-field">
+                <input v-model='ingredient.name' placeholder="flour" />
+            </div>
+        </div>
     </li>
 </ul>
-<button @click='addIngredient'>Add Ingredient</button>
-<hr>
+<a class="waves-effect waves-light btn" @click='addIngredient'>Add Ingredient</a>
+
 <p><strong>Steps</strong></p>
-<ul>
+<ul class="collection">
     <li v-for='step in steps'>
-        <textarea v-model='step.description'></textarea>
+        <div class="collection-item">
+            <textarea class="materialize-textarea" v-model='step.description'></textarea>
+        </div>
     </li>
 </ul>
-<button @click='addStep'>Add Step</button>
+<a class="waves-effect waves-light btn" @click='addStep'>Add Step</a>
 <hr>
-<p><button @click='saveRecipe'>Save Recipe</button></p>
+<a class="waves-effect waves-light btn" @click='saveRecipe'>Save Recipe</a>
 {% endblock %}
 
 {% block pre_app_script %}

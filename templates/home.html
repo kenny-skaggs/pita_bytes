@@ -3,12 +3,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <a href="{{ url_for('new_recipe') }}"><strong>Add New</strong></a>
     <ul>
         <li v-for='recipe in recipes' :key='recipe.id'>
             <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
         </li>
     </ul>
+    <a class="waves-effect waves-light btn" href="{{ url_for('new_recipe') }}"><strong>Add New</strong></a>
 {% endblock %}
 
 {% block app_data %}
