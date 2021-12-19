@@ -1,3 +1,25 @@
-<!doctype html>
-<title>PitaBytes - {{ recipe.name }}</title>
-<h1>{{ recipe.name }}</h1>
+{% extends '_base.html' %}
+
+{% block title%}{{ recipe.name }}{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('home') }}"><strong>Back</strong></a>
+    <h1>{{ recipe.name }}</h1>
+    <h4>Ingredients</h4>
+    <ul class="collection">
+        {% for measure in recipe.ingredients %}
+            <li class="collection-item">
+                {{ measure.amount }} {{ measure.unit }} {{ measure.ingredient.name }} {{ measure.preparation }}
+            </li>
+        {% endfor %}
+    </ul>
+    <h4>Steps</h4>
+    <ol class="collection">
+        {% for step in recipe.steps %}
+            <li class="collection-item">
+                {{ step.description }}
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}}
+

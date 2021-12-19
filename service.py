@@ -1,4 +1,6 @@
 
+from sqlalchemy.orm import joinedload
+
 from external import Database
 import models
 
@@ -28,4 +30,11 @@ class Storage:
     @classmethod
     def load_recipe(cls, recipe_id):
         with Database().get_new_session() as session:
-            return session.query(models.Recipe).filter(models.Recipe.id == recipe_id).one()
+            return session.query(
+                models.Recipe
+            ).filter(
+                models.Recipe.id == recipe_id
+            ).options(
+                joinedload(models.Recipe.ingredients).joinedload(models.Measurement.ingredient),
+                joinedload(models.Recipe.steps)
+            ).one()

@@ -23,6 +23,8 @@ class Measurement(BaseModel):
     __tablename__ = 'measurements'
     id = sa.Column(sa.Integer, primary_key=True)
     amount = sa.Column(sa.Float)
+    unit = sa.Column(sa.String(80))
+    preparation = sa.Column(sa.String(200))
     ingredient_id = sa.Column(sa.Integer, sa.ForeignKey(Ingredient.id))
     recipe_id = sa.Column(sa.Integer, sa.ForeignKey(Recipe.id))
     ingredient = relationship('Ingredient')
