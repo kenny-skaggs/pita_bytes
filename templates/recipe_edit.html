@@ -78,7 +78,7 @@
     modal_title: 'bob',
     recipe_id: {{ recipe.id_ if recipe else 0 }},
     name: '{{ recipe.name if recipe else '' }}',
-    source: '{{ recipe.source if recipe else '' }}',
+    source: '{{ recipe.source if recipe and recipe.source else '' }}',
     ingredients: [
         {% if recipe %}
             {% for ingredient in recipe.ingredients %}
@@ -121,6 +121,7 @@
             {
                 recipe_id: this.recipe_id,
                 name: this.name,
+                source: this.source,
                 ingredients: this.ingredients,
                 steps: this.steps.map(step => step.description)
             }

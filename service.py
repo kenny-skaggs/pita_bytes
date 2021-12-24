@@ -43,15 +43,7 @@ class Storage:
     def load_recipes(cls) -> List[view_models.Recipe]:
         with Database().get_new_session() as session:
             recipes = session.query(models.Recipe).all()
-            return [
-                view_models.Recipe(
-                    id_=recipe.id,
-                    name=recipe.name,
-                    ingredients=[],
-                    steps=[]
-                )
-                for recipe in recipes
-            ]
+            return [cls._get_vm_recipe(recipe) for recipe in recipes]
 
     @classmethod
     def load_recipe(cls, recipe_id) -> view_models.Recipe:
