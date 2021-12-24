@@ -13,6 +13,7 @@ class Ingredient:
 @dataclass
 class Recipe:
     name: str
+    source: str
     ingredients: List[Ingredient]
     steps: List[str]
     id_: int = None

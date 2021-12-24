@@ -31,6 +31,7 @@ def save_recipe():
     recipe = view_models.Recipe(
         id_=request_json['recipe_id'],
         name=request_json['name'],
+        source=request_json['source'],
         steps=request_json['steps'],
         ingredients=[
             view_models.Ingredient(

@@ -8,6 +8,7 @@
 
 {% block content %}
 <input class="small-6 cell" v-model='name' type="text" placeholder="Recipe name" />
+<input class="small-6 cell" v-model='source' type="text" placeholder="Source" />
 
 <div>
     Ingredients
@@ -77,6 +78,7 @@
     modal_title: 'bob',
     recipe_id: {{ recipe.id_ if recipe else 0 }},
     name: '{{ recipe.name if recipe else '' }}',
+    source: '{{ recipe.source if recipe else '' }}',
     ingredients: [
         {% if recipe %}
             {% for ingredient in recipe.ingredients %}

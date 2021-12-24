@@ -30,6 +30,7 @@ class Storage:
                 recipe = models.Recipe()
 
             recipe.name = recipe_data.name
+            recipe.source = recipe_data.source
             recipe.ingredients = ingredients
             recipe.steps = steps
 
@@ -80,6 +81,7 @@ class Storage:
         return view_models.Recipe(
             id_=recipe.id,
             name=recipe.name,
+            source=recipe.source,
             ingredients=ingredients,
             steps=steps
         )
