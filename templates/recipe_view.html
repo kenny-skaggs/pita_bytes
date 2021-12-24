@@ -7,9 +7,9 @@
     <h1>{{ recipe.name }}</h1>
     <h4>Ingredients</h4>
     <ul class="collection">
-        {% for measure in recipe.ingredients %}
+        {% for ingredient in recipe.ingredients %}
             <li class="collection-item">
-                {{ measure.amount }} {{ measure.unit }} {{ measure.ingredient.name }} {{ measure.preparation }}
+                {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }} {{ ingredient.preparation }}
             </li>
         {% endfor %}
     </ul>
@@ -17,11 +17,11 @@
     <ol class="collection">
         {% for step in recipe.steps %}
             <li class="collection-item">
-                {{ step.description }}
+                {{ step }}
             </li>
         {% endfor %}
     </ol>
 
-    <a class="waves-effect waves-light btn" href="{{ url_for('edit_recipe', recipe_id=recipe.id) }}">Edit Recipe</a>
+    <a class="button" href="{{ url_for('edit_recipe', recipe_id=recipe.id_) }}">Edit Recipe</a>
 {% endblock %}}
 

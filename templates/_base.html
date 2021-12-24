@@ -1,31 +1,43 @@
 <!doctype html>
-<head>
-    <title>PitaBytes - {% block title %}{% endblock %}</title>    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-</head>
-<html>
-    <div id="app" class="container">
-        {% block content %}{% endblock %}
-    </div>
+<html class="no-js" lang="en" >
+    <head>
+        <meta charset="utf-8">
+        <!-- If you delete this meta tag World War Z will become a reality -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PitaBytes - {% block title %}{% endblock %}</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css" crossorigin="anonymous">
+    </head>
 
-    <script>
-        {% block pre_app_script %}{% endblock %}
-        {% block app_script %}
-            Vue.options.delimiters = ["{[", "]}"]
-            var app = new Vue({
-                el: '#app',
-                data: {
-                    {% block app_data %}{% endblock %}
-                },
-                methods: {
-                    {% block app_methods %}{% endblock %}
-                }
-            })
-        {% endblock %}
-    </script>
+    <body>
+        <div id="app">
+            {% block navbar %}{% endblock %}
+            <div class="grid-container">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/js/foundation.min.js" crossorigin="anonymous"></script>
+
+        <script>
+            $(document).foundation();
+            {% block pre_app_script %}{% endblock %}
+            {% block app_script %}
+                Vue.options.delimiters = ["{[", "]}"]
+                var app = new Vue({
+                    el: '#app',
+                    data: {
+                        {% block app_data %}{% endblock %}
+                    },
+                    methods: {
+                        {% block app_methods %}{% endblock %}
+                    }
+                })
+            {% endblock %}
+        </script>
+    </body>
 </html>

@@ -2,45 +2,62 @@
 
 {% block title %}Edit{% endblock %}
 
-{% block content %}
-<a href="{{ url_for('home') }}"><strong>Back</strong></a>
+{% block navbar %}
+    <a href="{{ url_for('home') }}"><strong>Back</strong></a>
+{% endblock %}
 
-<div class="row">
-    <input class="col s6" v-model='name' placeholder="Recipe name"/>
+{% block content %}
+<input class="small-6 cell" v-model='name' type="text" placeholder="Recipe name" />
+
+<div>
+    Ingredients
+    <table>
+        <tr>
+            <th>Amount</th>
+            <th>Unit</th>
+            <th>Name</th>
+            <th>Preparation (optional)</th>
+        </tr>
+        <tr v-for='ingredient in ingredients'>
+            <td>
+                <input v-model='ingredient.amount' type="text" placeholder="1" />
+            </td>
+            <td>
+                <input v-model='ingredient.unit' type="text" placeholder="cup" />
+            </td>
+            <td>
+                <input v-model='ingredient.name' type="text" placeholder="flour" />
+            </td>
+            <td>
+                <input v-model='ingredient.preparation' type="text" placeholder="chopped" />
+            </td>
+        </tr>
+    </table>
+    <button class="button" @click='addIngredient'>Add Ingredient</button>
 </div>
 
-<p><strong>Ingredients</strong></p>
-<ul class="collection">
-    <li class="collection-item" v-for='ingredient in ingredients'>
-        <div class="row">
-            <div class="col s1 input-field">
-                <input v-model='ingredient.amount' placeholder="1" />
-            </div>
-            <div class="col s3 input-field">
-                <input v-model='ingredient.unit' placeholder="cup" />
-            </div>
-            <div class="col s3 input-field">
-                <input v-model='ingredient.name' placeholder="flour" />
-            </div>
-            <div class="col s3 input-field">
-                <input v-model='ingredient.preparation' placeholder="chopped" />
-            </div>
-        </div>
-    </li>
-</ul>
-<a class="waves-effect waves-light btn" @click='addIngredient'>Add Ingredient</a>
-
-<p><strong>Steps</strong></p>
-<ul class="collection">
-    <li v-for='step in steps'>
-        <div class="collection-item">
+<div>
+    Steps
+    <ol>
+        <li v-for='step in steps'>
             <textarea class="materialize-textarea" v-model='step.description'></textarea>
-        </div>
-    </li>
-</ul>
-<a class="waves-effect waves-light btn" @click='addStep'>Add Step</a>
+        </li>
+    </ol>
+    <button class="button" @click='addStep'>Add Step</button>
+</div>
 <hr>
-<a class="waves-effect waves-light btn" @click='saveRecipe'>Save Recipe</a>
+<button class="success button" @click='saveRecipe' :disabled='isSaving'>
+    <template v-if='isSaving'>Saving...</template>
+    <template v-else>Save Recipe</template>
+</button>
+
+<div class="reveal" id="modal" data-reveal>
+    <h1 class="title"></h1>
+    <p class="message"></p>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 {% endblock %}
 
 {% block pre_app_script %}
@@ -49,23 +66,25 @@
         unit: '',
         name: '',
         preparation: ''
-    }
+    };
     var step_template = {
         description: ''
-    }
+    };
+    var $modal = $('#modal');
 {% endblock %}
 
 {% block app_data %}
-    recipe_id: {{ recipe.id if recipe else 0 }},
+    modal_title: 'bob',
+    recipe_id: {{ recipe.id_ if recipe else 0 }},
     name: '{{ recipe.name if recipe else '' }}',
     ingredients: [
         {% if recipe %}
-            {% for measure in recipe.ingredients %}
+            {% for ingredient in recipe.ingredients %}
                 {
-                    amount: {{ measure.amount }},
-                    unit: "{{ measure.unit or 'null' }}",
-                    name: "{{ measure.ingredient.name }}",
-                    preparation: "{{ measure.preparation or '' }}"
+                    amount: "{{ ingredient.amount }}",
+                    unit: "{{ ingredient.unit or 'null' }}",
+                    name: "{{ ingredient.name }}",
+                    preparation: "{{ ingredient.preparation or '' }}"
                 },
             {% endfor %}
         {% else %}
@@ -76,13 +95,14 @@
         {% if recipe %}
             {% for step in recipe.steps %}
                 {
-                    description: "{{ step.description }}"
+                    description: "{{ step }}"
                 },
             {% endfor %}
         {% else %}
             Object.assign({}, step_template)
         {% endif %}
-    ]
+    ],
+    isSaving: false
 {% endblock %}
 
 {% block app_methods %}
@@ -93,6 +113,7 @@
         this.steps.push(Object.assign({}, step_template))
     },
     saveRecipe: function() {
+        this.isSaving = true;
         axios.post(
             "{{ url_for("save_recipe") }}",
             {
@@ -101,6 +122,16 @@
                 ingredients: this.ingredients,
                 steps: this.steps.map(step => step.description)
             }
-        )
+        ).then((response) => {
+            $modal.find('.title').text('Success!');
+            $modal.find('.message').text('Recipe "' + this.name + '" saved.');
+            $modal.foundation('open');
+
+            setTimeout(() => window.location.href = response.data, 1000);
+        }).catch(() => {
+            $modal.find('.title').text('Error');
+            $modal.find('.message').text('Something went wrong, please try again.');
+            $modal.foundation('open');
+        }).finally(() => this.isSaving = false);
     }
 {% endblock %}

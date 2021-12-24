@@ -3,21 +3,19 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <ul>
-        <li v-for='recipe in recipes' :key='recipe.id'>
-            <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
-        </li>
-    </ul>
-    <a class="waves-effect waves-light btn" href="{{ url_for('new_recipe') }}"><strong>Add New</strong></a>
+    <div v-for='recipe in recipes' :key='recipe.id'>
+        <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
+    </div>
+    <a class="button" href="{{ url_for('new_recipe') }}">Add New Recipe</a>
 {% endblock %}
 
 {% block app_data %}
     recipes: [
         {% for recipe in recipes %}
         {
-            id: {{ recipe.id }},
+            id: {{ recipe.id_ }},
             name: "{{ recipe.name }}",
-            view_link: "{{ url_for('show_recipe', recipe_id=recipe.id) }}"
+            view_link: "{{ url_for('show_recipe', recipe_id=recipe.id_) }}"
         },
         {% endfor %}
     ]
