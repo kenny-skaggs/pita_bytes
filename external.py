@@ -1,10 +1,19 @@
 import atexit
 from contextlib import contextmanager
+from enum import Enum
 import os
 from sshtunnel import SSHTunnelForwarder
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+
+class Environment(Enum):
+    PROD = 1
+    DEV = 2
+
+
+CURRENT_ENV = Environment.PROD
 
 
 class Database:
@@ -34,9 +43,12 @@ class Database:
         if not (db_user and db_password):
             raise Exception('Database credentials not set')
 
-        tunnel = SshTunnelFactory().start_tunnel()
+        local_postgres_port = 5432
+        if CURRENT_ENV == Environment.DEV:
+            tunnel = SshTunnelFactory().start_tunnel()
+            local_postgres_port = tunnel.local_bind_port
 
-        engine = create_engine(f'postgresql://{db_user}:{db_password}@localhost:{tunnel.local_bind_port}/postgres')
+        engine = create_engine(f'postgresql://{db_user}:{db_password}@localhost:{local_postgres_port}/postgres')
         return sessionmaker(bind=engine, expire_on_commit=False), engine
 
 
