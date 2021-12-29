@@ -19,7 +19,7 @@
             <th>Name</th>
             <th>Preparation (optional)</th>
         </tr>
-        <tr v-for='ingredient in ingredients'>
+        <tr v-for='(ingredient, index) in ingredients'>
             <td>
                 <input v-model='ingredient.amount' type="text" placeholder="1" />
             </td>
@@ -32,6 +32,11 @@
             <td>
                 <input v-model='ingredient.preparation' type="text" placeholder="chopped" />
             </td>
+            <td>
+                <template v-if='ingredients.length > 1'>
+                    <a href="#" @click='removeIngredient(index)'>&times;</a>
+                </template>
+            </td>
         </tr>
     </table>
     <button class="button" @click='addIngredient'>Add Ingredient</button>
@@ -40,8 +45,13 @@
 <div>
     Steps
     <ol>
-        <li v-for='step in steps'>
-            <textarea class="materialize-textarea" v-model='step.description'></textarea>
+        <li v-for='(step, index) in steps'>
+            <div class="grid-x grid-margin-x">
+                <textarea class="cell auto" v-model='step.description'></textarea>
+                <template v-if='steps.length > 1'>
+                    <a class="cell small-1" href="#" @click='removeStep(index)'>&times;</a>
+                </template>
+            </div>
         </li>
     </ol>
     <button class="button" @click='addStep'>Add Step</button>
@@ -109,10 +119,16 @@
 
 {% block app_methods %}
     addIngredient: function() {
-        this.ingredients.push(Object.assign({}, ingredient_template))
+        this.ingredients.push(Object.assign({}, ingredient_template));
+    },
+    removeIngredient: function(index) {
+        this.ingredients.splice(index, 1);
     },
     addStep: function() {
         this.steps.push(Object.assign({}, step_template))
+    },
+    removeStep: function(index) {
+        this.steps.splice(index, 1);
     },
     saveRecipe: function() {
         this.isSaving = true;
