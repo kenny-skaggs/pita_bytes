@@ -21,16 +21,16 @@
         </tr>
         <tr v-for='(ingredient, index) in ingredients'>
             <td>
-                <input v-model='ingredient.amount' type="text" placeholder="1" />
+                <input v-model='ingredient.amount' ref="amountInput" type="text" placeholder="1" @keyup.enter='addIngredient(index)' />
             </td>
             <td>
-                <input v-model='ingredient.unit' type="text" placeholder="cup" />
+                <input v-model='ingredient.unit' type="text" placeholder="cup" @keyup.enter='addIngredient(index)' />
             </td>
             <td>
-                <input v-model='ingredient.name' type="text" placeholder="flour" />
+                <input v-model='ingredient.name' type="text" placeholder="flour" @keyup.enter='addIngredient(index)' />
             </td>
             <td>
-                <input v-model='ingredient.preparation' type="text" placeholder="chopped" />
+                <input v-model='ingredient.preparation' type="text" placeholder="chopped" @keyup.enter='addIngredient(index)' />
             </td>
             <td>
                 <template v-if='ingredients.length > 1'>
@@ -47,7 +47,7 @@
     <ol>
         <li v-for='(step, index) in steps'>
             <div class="grid-x grid-margin-x">
-                <textarea class="cell auto" v-model='step.description'></textarea>
+                <textarea ref='stepText' class="cell auto" v-model='step.description' @keydown.enter.prevent.stop='' @keyup.enter='addStep(index)' ></textarea>
                 <template v-if='steps.length > 1'>
                     <a class="cell small-1" href="#" @click='removeStep(index)'>&times;</a>
                 </template>
@@ -118,17 +118,29 @@
 {% endblock %}
 
 {% block app_methods %}
-    addIngredient: function() {
-        this.ingredients.push(Object.assign({}, ingredient_template));
+    addIngredient: function(afterIndex) {
+        this.addNewListItem(afterIndex, ingredient_template, this.ingredients, this.$refs.amountInput);
     },
     removeIngredient: function(index) {
         this.ingredients.splice(index, 1);
     },
-    addStep: function() {
-        this.steps.push(Object.assign({}, step_template))
+    addStep: function(afterIndex) {
+        this.addNewListItem(afterIndex, step_template, this.steps, this.$refs.stepText);
+        return false;
     },
     removeStep: function(index) {
         this.steps.splice(index, 1);
+    },
+    addNewListItem(afterIndex, template, itemList, refsList) {
+        var newItem = Object.assign({}, template),
+            newIndex = null;
+        if (Number.isInteger(afterIndex)) {
+            newIndex = afterIndex + 1;
+        } else {
+            newIndex = itemList.length;
+        }
+        itemList.splice(newIndex, 0, newItem);
+        setTimeout(() => refsList[newIndex].focus(), 1);  // Waiting until element is incorporated into Vue
     },
     saveRecipe: function() {
         this.isSaving = true;
