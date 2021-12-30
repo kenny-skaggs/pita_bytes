@@ -1,9 +1,11 @@
 import atexit
 from contextlib import contextmanager
 from enum import Enum
+import logging
 import os
-from sshtunnel import SSHTunnelForwarder
 
+import sentry_sdk
+from sshtunnel import SSHTunnelForwarder
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -14,6 +16,19 @@ class Environment(Enum):
 
 
 CURRENT_ENV = Environment.PROD
+
+
+class ErrorTracking:
+    @classmethod
+    def initialize(cls):
+        if CURRENT_ENV == Environment.PROD:
+            sentry_dsn = os.environ.get('SENTRY_DSN')
+            if sentry_dsn:
+                sentry_sdk.init(sentry_dsn)
+            else:
+                raise Exception('Unable to load DSN')
+        else:
+            logging.warning('Skipping error tracking service')
 
 
 class Database:

@@ -1,10 +1,12 @@
-import time
 
 from flask import Flask, render_template, request, url_for
 
 import view_models
+import external
 from service import Storage
 
+
+external.ErrorTracking.initialize()
 app = Flask(__name__)
 
 
@@ -22,6 +24,7 @@ def show_recipe(recipe_id):
 
 @app.route('/new')
 def new_recipe():
+    print(7 / 0)
     return render_template('recipe_edit.html', recipe=None)
 
 
