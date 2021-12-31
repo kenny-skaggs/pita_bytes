@@ -99,7 +99,7 @@ class AmountConverter:
             else:
                 return tokens
 
-        return parse_expr(amount, transformations=(mixed_numbers, auto_number)).evalf()
+        return float(parse_expr(amount, transformations=(mixed_numbers, auto_number)).evalf())
 
     @classmethod
     def deserialize_value(cls, amount: float) -> str:
