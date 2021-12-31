@@ -13,6 +13,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     recipes = Storage.load_recipes()
+    recipes.sort(key=lambda recipe: recipe.name)
     return render_template('home.html', recipes=recipes)
 
 
