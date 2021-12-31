@@ -87,7 +87,19 @@ class AmountConverter:
 
     @classmethod
     def serialize_value(cls, amount: str) -> float:
-        return float(parse_expr(amount).evalf())
+        from sympy.parsing.sympy_parser import auto_number
+
+        def mixed_numbers(tokens, _, __):
+            if len(tokens) == 6:  # mixed number
+                numerator_token = tokens[1]
+                denominator_token = tokens[3]
+
+                new_numerator_val = int(tokens[0][1]) * int(denominator_token[1]) + int(numerator_token[1])
+                return [(numerator_token[0], str(new_numerator_val)), tokens[2], denominator_token, *tokens[4:]]
+            else:
+                return tokens
+
+        return parse_expr(amount, transformations=(mixed_numbers, auto_number)).evalf()
 
     @classmethod
     def deserialize_value(cls, amount: float) -> str:
@@ -103,6 +115,14 @@ class AmountConverter:
                 if denominator == 1:
                     return str(integer_numerator)
                 else:
-                    return f'{integer_numerator}/{denominator}'
+                    return cls._eval_as_mixed_number(integer_numerator, denominator)
 
-        return 'conversion error'
+        raise Exception('conversion failed')
+
+    @classmethod
+    def _eval_as_mixed_number(cls, numerator: int, denominator: int) -> str:
+        if numerator / denominator > 1:
+            return f'{numerator // denominator} {numerator % denominator}/{denominator}'
+        else:
+            return f'{numerator}/{denominator}'
+
