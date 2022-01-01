@@ -56,6 +56,25 @@
     </ol>
     <button class="button" @click='addStep'>Add Step</button>
 </div>
+
+
+<section class="tag-cloud-section">
+    <h5>Tags</h5>
+    <div class='input-group'>
+        <span class='input-group-label'>New tag</span>
+        <input class='input-group-field' type='text' ref='tagTextInput' @keyup.enter='addNewTag'>
+        <div class='input-group-button'>
+            <button type='submit' class='button' @click='addNewTag'>Add</button>
+        </div>
+    </div>
+    <div class="tag-cloud">
+        <span class="tag-cloud-individual-tag" v-for='(tag, index) in tags'>
+            {[ tag ]}
+            <a href="#" @click.prevent='removeTag(index)'>&times;</a>
+        </span>
+    </div>
+</section>
+
 <hr>
 <button class="success button" @click='saveRecipe' :disabled='isSaving'>
     <template v-if='isSaving'>Saving...</template>
@@ -114,6 +133,7 @@
             Object.assign({}, step_template)
         {% endif %}
     ],
+    tags: [],
     isSaving: false
 {% endblock %}
 
@@ -142,6 +162,13 @@
         itemList.splice(newIndex, 0, newItem);
         setTimeout(() => refsList[newIndex].focus(), 1);  // Waiting until element is incorporated into Vue
     },
+    addNewTag: function() {
+        this.tags.push(this.$refs.tagTextInput.value);
+        this.$refs.tagTextInput.value = '';
+    },
+    removeTag: function(index) {
+        this.tags.splice(index, 1);
+    },
     saveRecipe: function() {
         this.isSaving = true;
         axios.post(
@@ -151,7 +178,8 @@
                 name: this.name,
                 source: this.source,
                 ingredients: this.ingredients,
-                steps: this.steps.map(step => step.description)
+                steps: this.steps.map(step => step.description),
+                tags: this.tags
             }
         ).then((response) => {
             $modal.find('.title').text('Success!');

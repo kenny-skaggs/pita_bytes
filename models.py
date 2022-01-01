@@ -37,3 +37,18 @@ class Step(BaseModel):
     number = sa.Column(sa.SmallInteger)
     description = sa.Column(sa.String(2000))
     recipe_id = sa.Column(sa.Integer, sa.ForeignKey(Recipe.id))
+
+
+class Tag(BaseModel):
+    __tablename__ = 'tag'
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.String(200))
+
+
+class RecipeTag(BaseModel):
+    __tablename__ = 'recipe_tag'
+    id = sa.Column(sa.Integer, primary_key=True)
+    recipe_id = sa.Column(sa.Integer, sa.ForeignKey(Recipe.id))
+    recipe = relationship('Recipe', backref='tag_refs')
+    tag_id = sa.Column(sa.Integer, sa.ForeignKey(Tag.id))
+    tag = relationship('Tag', backref='recipe_refs')
