@@ -3,19 +3,83 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <div v-for='recipe in recipes' :key='recipe.id'>
-        <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
+    <div class='input-group'>
+        <span class='input-group-label'>Search</span>
+        <input class='input-group-field' type='text' v-model='searchText'>
     </div>
-    <a class="button" href="{{ url_for('new_recipe') }}">Add New Recipe</a>
+    <div class="cell small-6">
+        <div v-for='recipe in filteredRecipes' :key='recipe.id'>
+            <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
+        </div>
+        <a class="button" href="{{ url_for('new_recipe') }}">Add New Recipe</a>
+    </div>
+{% endblock %}
+
+{% block pre_app_script %}
+    var pendingSearchTimer = null,
+        currentSearchRequest = null;
+{% endblock %}
+
+{% block vue_other %}
+    computed: {
+        filteredRecipes: function () {
+            if (this.searchText == "") {
+                return this.recipes;
+            } else {
+                var recipeList = [],
+                    appThis = this;
+                this.recipes.forEach((recipe) => {
+                    if (recipe.name.includes(this.searchText)) {
+                        recipeList.push(recipe);
+                        return;
+                    }
+
+                    var matchFound = false;
+                    recipe.tags.forEach((tag) => {
+                        if (tag.includes(this.searchText)) {
+                            matchFound = true;
+                        }
+                    });
+                    if (matchFound) {
+                        recipeList.push(recipe);
+                        return;
+                    }
+
+                    recipe.ingredients.forEach((ingredient) => {
+                        if (ingredient.includes(this.searchText)) {
+                            matchFound = true;
+                        }
+                    });
+                    if (matchFound) {
+                        recipeList.push(recipe);
+                        return;
+                    }
+                });
+                return recipeList;
+            }
+            return this.message.split('').reverse().join('')
+        }
+    }
 {% endblock %}
 
 {% block app_data %}
+    searchText: "",
     recipes: [
         {% for recipe in recipes %}
         {
             id: {{ recipe.id_ }},
             name: "{{ recipe.name }}",
-            view_link: "{{ url_for('show_recipe', recipe_id=recipe.id_) }}"
+            view_link: "{{ url_for('show_recipe', recipe_id=recipe.id_) }}",
+            tags: [
+                {% for tag in recipe.tags %}
+                    "{{ tag }}",
+                {% endfor %}
+            ],
+            ingredients: [
+                {% for ingredient in recipe.ingredients %}
+                    "{{ ingredient.name }}",
+                {% endfor %}
+            ]
         },
         {% endfor %}
     ]

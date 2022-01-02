@@ -25,6 +25,17 @@
         {% endfor %}
     </ol>
 
+    {% if recipe.tags %}
+        <section class="tag-cloud-section">
+            <h5>Tags</h5>
+            <div class="tag-cloud">
+                {% for tag in recipe.tags %}
+                    <span class="tag-cloud-individual-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
     <a class="button" href="{{ url_for('edit_recipe', recipe_id=recipe.id_) }}">Edit Recipe</a>
 {% endblock %}}
 

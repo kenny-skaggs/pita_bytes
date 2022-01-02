@@ -133,7 +133,13 @@
             Object.assign({}, step_template)
         {% endif %}
     ],
-    tags: [],
+    tags: [
+        {% if recipe %}
+            {% for tag in recipe.tags %}
+                "{{ tag }}",
+            {% endfor %}
+        {% endif %}
+    ],
     isSaving: false
 {% endblock %}
 

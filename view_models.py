@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 
@@ -16,4 +16,5 @@ class Recipe:
     source: str
     ingredients: List[Ingredient]
     steps: List[str]
+    tags: List[str] = field(default_factory=list)
     id_: int = None

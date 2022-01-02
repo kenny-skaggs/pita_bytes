@@ -44,7 +44,8 @@ def save_recipe():
                 preparation=ingredient_json['preparation']
             )
             for ingredient_json in request_json['ingredients']
-        ]
+        ],
+        tags=request_json['tags']
     )
     recipe_id = Storage.upsert_recipe(recipe)
     return url_for('show_recipe', recipe_id=recipe_id)
