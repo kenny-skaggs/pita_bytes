@@ -1,12 +1,17 @@
+import os
+import random
 from typing import Collection, List
 
 from sqlalchemy.orm import joinedload, Session
 from sympy import Eq, solve, symbols
 from sympy.parsing.sympy_parser import parse_expr
 
-from external import Database
+from tool_kit.external import Database, Environment
 import models
 import view_models
+
+
+_db_manager = Database(use_ssl_tunnel=Environment.is_dev())
 
 
 class Storage:
@@ -24,7 +29,7 @@ class Storage:
         steps = [models.Step(description=step, number=number) for number, step in enumerate(recipe_data.steps)]
         tag_names = [tag_name.lower() for tag_name in recipe_data.tags]
 
-        with Database().get_new_session() as session:
+        with _db_manager.get_new_session() as session:
             existing_tags = cls._load_existing_tags(tag_names, session)
             new_tags = [
                 models.Tag(name=tag_name)
@@ -62,7 +67,7 @@ class Storage:
 
     @classmethod
     def load_recipes(cls) -> List[view_models.Recipe]:
-        with Database().get_new_session() as session:
+        with _db_manager.get_new_session() as session:
             recipes = session.query(models.Recipe).options(
                 joinedload(models.Recipe.ingredients).joinedload(models.Measurement.ingredient)
             ).all()
@@ -70,7 +75,7 @@ class Storage:
 
     @classmethod
     def load_recipe(cls, recipe_id) -> view_models.Recipe:
-        with Database().get_new_session() as session:
+        with _db_manager.get_new_session() as session:
             recipe = session.query(
                 models.Recipe
             ).filter(
@@ -80,6 +85,12 @@ class Storage:
                 joinedload(models.Recipe.steps)
             ).one()
             return cls._get_vm_recipe(recipe)
+
+    @classmethod
+    def random_recipe(cls) -> view_models.Recipe:
+        with _db_manager.get_new_session() as session:
+            recipe_ids = [recipe.id for recipe in session.query(models.Recipe.id).all()]
+            return cls.load_recipe(random.choice(recipe_ids))
 
     @classmethod
     def _get_vm_recipe(cls, recipe: models.Recipe) -> view_models.Recipe:

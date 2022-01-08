@@ -12,6 +12,7 @@
             <a v-bind:href='recipe.view_link'>{[ recipe.name ]}</a>
         </div>
         <a class="button" href="{{ url_for('new_recipe') }}">Add New Recipe</a>
+        <a class="button" href="{{ url_for('random_recipe') }}">Show Random Recipe</a>
     </div>
 {% endblock %}
 

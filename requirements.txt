@@ -1,3 +1,5 @@
+-r tool_kit/tool_kit_requirements.txt
+
 alembic==1.7.5
 bcrypt==3.2.0
 certifi==2021.10.8
@@ -17,9 +19,7 @@ paramiko==2.9.0
 psycopg2-binary==2.9.2
 pycparser==2.21
 PyNaCl==1.4.0
-sentry-sdk==1.5.1
 six==1.16.0
-SQLAlchemy==1.4.28
 sshtunnel==0.4.0
 sympy==1.9
 typing-extensions==4.0.1

@@ -2,11 +2,13 @@
 from flask import Flask, render_template, request, url_for
 
 import view_models
-import external
+from tool_kit import external
 from service import Storage
 
 
-external.ErrorTracking.initialize()
+if not external.Environment.is_dev():
+    external.ErrorTracking.initialize()
+
 app = Flask(__name__)
 
 
@@ -20,6 +22,12 @@ def home():
 @app.route('/recipe/<recipe_id>')
 def show_recipe(recipe_id):
     recipe = Storage.load_recipe(recipe_id=recipe_id)
+    return render_template('recipe_view.html', recipe=recipe)
+
+
+@app.route('/random')
+def random_recipe():
+    recipe = Storage.random_recipe()
     return render_template('recipe_view.html', recipe=recipe)
 
 
